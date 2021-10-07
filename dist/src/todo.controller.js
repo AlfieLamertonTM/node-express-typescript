@@ -114,11 +114,11 @@ var TodoController = /** @class */ (function (_super) {
     // DELETE: delete item with id passed, if it doesn't exist, return 404 not found
     TodoController.prototype.delete = function (id, res) {
         var deleteObject = this.todoService.delete(tempStorageList, id);
-        if (!!deleteObject) {
+        if (typeof deleteObject != "number") {
             tempStorageList === deleteObject;
         }
         else {
-            return res.sendStatus(404);
+            return res.sendStatus(deleteObject);
         }
     };
     __decorate([

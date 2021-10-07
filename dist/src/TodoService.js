@@ -12,31 +12,22 @@ var TodoService = /** @class */ (function () {
     function TodoService() {
     }
     TodoService.prototype.get = function (todoObjectList, id) {
-        var element = searchTodoObjectListByID(todoObjectList, id);
-        if (!!element) {
-            return element;
+        var elementPresentInList = searchTodoObjectListByID(todoObjectList, id);
+        if (elementPresentInList) {
+            return elementPresentInList;
         }
         else {
-            return null;
+            return 404;
         }
     };
     TodoService.prototype.create = function (todoObjectList, requestBody) {
         var todoObject = createTodoObject(requestBody);
         var todoObjectID = todoObject.id;
-        // const todoObjectID = (element: todo) => element.id === todoObject.id;
-        // const todoObjectIndex = todoObjectList.findIndex(todoObjectID);
-        // if (todoObjectList[todoObjectIndex]) {
-        //   return null;
-        // } else {
-        //   return todoObject;
-        // }
-        var element = searchTodoObjectListByID(todoObjectList, todoObjectID);
-        if (!element) {
-            // element not present in list (it should not be)
+        var elementPresentInList = searchTodoObjectListByID(todoObjectList, todoObjectID);
+        if (!elementPresentInList) {
             return todoObject;
         }
         else {
-            // element is already in list
             return 409;
         }
     };
@@ -48,7 +39,7 @@ var TodoService = /** @class */ (function () {
             return todoObjectList;
         }
         else {
-            return null;
+            return 404;
         }
     };
     TodoService = __decorate([
@@ -62,10 +53,8 @@ function searchTodoObjectListByID(storagetodoObjectList, id) {
         if (storagetodoObjectList[i].id === id) {
             return storagetodoObjectList[i];
         }
-        else {
-            return undefined;
-        }
     }
+    return null;
 }
 exports.searchTodoObjectListByID = searchTodoObjectListByID;
 function createTodoObject(requestBody) {
