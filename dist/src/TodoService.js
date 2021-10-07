@@ -6,13 +6,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTodoObject = exports.searchtodoObjectListByID = exports.TodoService = void 0;
+exports.createTodoObject = exports.searchTodoObjectListByID = exports.TodoService = void 0;
 var inversify_1 = require("inversify");
 var TodoService = /** @class */ (function () {
     function TodoService() {
     }
     TodoService.prototype.get = function (todoObjectList, id) {
-        var element = searchtodoObjectListByID(todoObjectList, id);
+        var element = searchTodoObjectListByID(todoObjectList, id);
         if (!!element) {
             return element;
         }
@@ -22,13 +22,22 @@ var TodoService = /** @class */ (function () {
     };
     TodoService.prototype.create = function (todoObjectList, requestBody) {
         var todoObject = createTodoObject(requestBody);
-        var todoObjectID = function (element) { return element.id === todoObject.id; };
-        var todoObjectIndex = todoObjectList.findIndex(todoObjectID);
-        if (todoObjectList[todoObjectIndex]) {
-            return null;
+        var todoObjectID = todoObject.id;
+        // const todoObjectID = (element: todo) => element.id === todoObject.id;
+        // const todoObjectIndex = todoObjectList.findIndex(todoObjectID);
+        // if (todoObjectList[todoObjectIndex]) {
+        //   return null;
+        // } else {
+        //   return todoObject;
+        // }
+        var element = searchTodoObjectListByID(todoObjectList, todoObjectID);
+        if (!element) {
+            // element not present in list (it should not be)
+            return todoObject;
         }
         else {
-            return todoObject;
+            // element is already in list
+            return 409;
         }
     };
     TodoService.prototype.delete = function (todoObjectList, id) {
@@ -48,7 +57,7 @@ var TodoService = /** @class */ (function () {
     return TodoService;
 }());
 exports.TodoService = TodoService;
-function searchtodoObjectListByID(storagetodoObjectList, id) {
+function searchTodoObjectListByID(storagetodoObjectList, id) {
     for (var i = 0; i < storagetodoObjectList.length; i++) {
         if (storagetodoObjectList[i].id === id) {
             return storagetodoObjectList[i];
@@ -58,7 +67,7 @@ function searchtodoObjectListByID(storagetodoObjectList, id) {
         }
     }
 }
-exports.searchtodoObjectListByID = searchtodoObjectListByID;
+exports.searchTodoObjectListByID = searchTodoObjectListByID;
 function createTodoObject(requestBody) {
     var todo = {
         id: requestBody.id,

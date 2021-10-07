@@ -100,11 +100,12 @@ var TodoController = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 requestBody = req.body;
                 createObject = this.todoService.create(tempStorageList, requestBody);
-                if (!!createObject) {
+                if (typeof createObject != "number") {
+                    tempStorageList.push(createObject);
                     return [2 /*return*/, res.sendStatus(201)];
                 }
                 else {
-                    return [2 /*return*/, res.sendStatus(409)];
+                    return [2 /*return*/, res.sendStatus(createObject)];
                 }
                 return [2 /*return*/];
             });
