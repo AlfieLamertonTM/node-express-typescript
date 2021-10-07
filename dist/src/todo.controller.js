@@ -59,86 +59,67 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TodoController = void 0;
 var inversify_express_utils_1 = require("inversify-express-utils");
+var inversify_1 = require("inversify");
+var TYPES_1 = __importDefault(require("./TYPES"));
 // The following example will declare a controller that responds to `GET /todo'.
 var tempStorageList = [];
-function createTodoObject(requestBody) {
-    var todo = {
-        id: requestBody.id,
-        name: requestBody.name,
-        completed: requestBody.completed
-    };
-    return todo;
-}
-function searchArrayByID(storageArray, id, purpose) {
-    for (var i = 0; i < storageArray.length; i++) {
-        if (storageArray[i].id === id) {
-            return storageArray[i];
-        }
-        else {
-            return undefined;
-        }
-    }
-}
 var TodoController = /** @class */ (function (_super) {
     __extends(TodoController, _super);
-    function TodoController() {
-        return _super !== null && _super.apply(this, arguments) || this;
+    function TodoController(todoService) {
+        var _this = _super.call(this) || this;
+        _this.todoService = todoService;
+        return _this;
     }
     // GET: Make get request that adds an item with the id passed, if it doesn't exist, return 404 not found
     TodoController.prototype.get = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var element;
+            var id, getRequest;
             return __generator(this, function (_a) {
-                element = searchArrayByID(tempStorageList, req.params.id, "find");
-                if (element != undefined) {
-                    return [2 /*return*/, element];
+                id = req.params.id;
+                getRequest = this.todoService.get(tempStorageList, id);
+                if (!!getRequest) {
+                    return [2 /*return*/, getRequest];
                 }
                 else {
                     return [2 /*return*/, res.sendStatus(404)];
                 }
-                ;
                 return [2 /*return*/];
             });
         });
     };
-    ;
     // CREATE: create item with id passed, if it already exists, return http response to reflect this
     TodoController.prototype.create = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var todoObject, todoObjectID, indexOfTodo;
+            var requestBody, createObject;
             return __generator(this, function (_a) {
-                todoObject = createTodoObject(req.body);
-                todoObjectID = function (element) { return element.id === todoObject.id; };
-                indexOfTodo = tempStorageList.findIndex(todoObjectID);
-                if (tempStorageList[indexOfTodo]) { // id present in array (ERROR)
-                    return [2 /*return*/, res.status(409)];
-                }
-                else { // id not present in array
-                    tempStorageList.push(todoObject);
+                requestBody = req.body;
+                createObject = this.todoService.create(tempStorageList, requestBody);
+                if (!!createObject) {
                     return [2 /*return*/, res.sendStatus(201)];
                 }
-                ;
+                else {
+                    return [2 /*return*/, res.sendStatus(409)];
+                }
                 return [2 /*return*/];
             });
         });
     };
-    ;
     // DELETE: delete item with id passed, if it doesn't exist, return 404 not found
     TodoController.prototype.delete = function (id, res) {
-        var todoObjectID = function (element) { return element.id === id; };
-        var indexOfTodo = tempStorageList.findIndex(todoObjectID);
-        if (tempStorageList[indexOfTodo]) {
-            delete tempStorageList[indexOfTodo];
+        var deleteObject = this.todoService.delete(tempStorageList, id);
+        if (!!deleteObject) {
+            tempStorageList === deleteObject;
         }
         else {
             return res.sendStatus(404);
         }
-        ;
     };
-    ;
     __decorate([
         inversify_express_utils_1.httpGet("/:id"),
         __param(0, inversify_express_utils_1.request()),
@@ -155,9 +136,9 @@ var TodoController = /** @class */ (function (_super) {
         __param(1, inversify_express_utils_1.response())
     ], TodoController.prototype, "delete", null);
     TodoController = __decorate([
-        inversify_express_utils_1.controller("/todo")
+        inversify_express_utils_1.controller("/todo"),
+        __param(0, inversify_1.inject(TYPES_1.default.ITodoService))
     ], TodoController);
     return TodoController;
 }(inversify_express_utils_1.BaseHttpController));
 exports.TodoController = TodoController;
-;
